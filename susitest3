@@ -1,0 +1,252 @@
+Brief introduction:
+**SUSI – A Bridge to Simplify & Enhance H/W & Application Implementation Efficiency**
+
+SUSI (Secured & Unified Smart Interface) is a suite of Software APIs (Application Programming Interfaces) designed to simplify hardware access for application developers. It provides a unified interface for interacting with various hardware components, eliminating the need to study complex hardware specifications and write low-level drivers.
+SUSI full name : Secure and Unified Smart Interface.
+SUSI (Secured & Unified Smart Interface) is a suite of Software APIs (Application Programming Interfaces) designed to simplify hardware access for application developers. It provides a unified interface for interacting with various hardware components, eliminating the need to study complex hardware specifications and write low-level drivers.
+Including GPIO Functions, SMBus Functions, I2C Functions, Watchdog Functions, Hardware Monitor Functions, Backlight Control Functions, Storage Functions, Thermal Protection Functions.
+Susi4.h header file includes the API declaration, constants and flags that are required for programming.
+
+@@@@
+Benefits
+SUSI (Secured & Unified Smart Interface) is a suite of Software APIs (Application Programming Interfaces) designed to simplify hardware access for application developers. It provides a unified interface for interacting with various hardware components, eliminating the need to study complex hardware specifications and write low-level drivers.
+It offers several advantages for embedded system developers:
+
+* **Faster Time to Market:** The unified API simplifies hardware access, reducing development time and effort.
+* **Reduced Project Effort:** SUSI provides pre-built drivers and APIs, eliminating the need to write them from scratch.
+* **Enhanced Hardware Platform Reliability:** SUSI's trusted solution ensures compatibility and stability, enhancing platform reliability.
+* **Flexible Upgrade Possibilities:** Upgrading SUSI to newer versions provides access to new features and functionalities.
+* **Backward compatibility:** SUSI maintains backward compatibility with previous versions, ensuring existing applications continue to function.
+
+@@@@
+Environment Requirements : Operating Systems
+
+SUSI supports a wide range of operating systems, including:
+
+* Windows XP Embedded
+* Windows XP 32-bit
+* Windows 7 (x86 / x64)
+* WES7 (x86 / x64)
+* Windows 8 Desktop (x86 / x64)
+* Windows 10 (x64)
+* Windows 11 (x64)
+* Windows CE 5 / 6 / 7
+* RISC Yocto 2.1
+* Ubuntu 20.04
+* Ubuntu 22.04
+* Linux (Project based, request from your local FAE)
+* Android (Project based, request from your local FAE)
+* QNX (Project based, request from your local FAE)
+* VxWorks (Project based, request from your local FAE) 
+
+@@@@
+Status Codes( part 1)
+SUSI API functions return status codes to indicate the outcome of an operation. Here's a list of possible status codes:
+**SUSI_STATUS_NOT_INITIALIZED:**
+* Value: `0xFFFFFFFF`
+* Description: The SUSI API library is not yet initialized or initialization was unsuccessful. You need to call `SusiLibInitialize` before using any other SUSI API functions.
+* Action: Call `SusiLibInitialize`.
+
+**SUSI_STATUS_INITIALIZED:**
+* Value: `0xFFFFFFFE`
+* Description: The SUSI API library is successfully initialized.
+* Action: None.
+
+**SUSI_STATUS_ALLOC_ERROR:**
+* Value: `0xFFFFFFFD`
+* Description: Memory allocation error. This indicates that the system was unable to allocate the required memory for the operation.
+* Action: Free up memory and try again. Consider checking for memory leaks in your application or increasing available system memory.
+
+**SUSI_STATUS_DRIVER_TIMEOUT:**
+* Value: `0xFFFFFFFC`
+* Description: Timeout occurred in the driver. This is usually caused by a hardware or software semaphore timeout, meaning the driver did not receive a response within the expected timeframe.
+* Action: Retry the operation. If the issue persists, investigate potential hardware issues or driver conflicts.
+
+**SUSI_STATUS_INVALID_PARAMETER:**
+* Value: `0xFFFFFEFF`
+* Description: One or more parameters passed to the SUSI API function are outside the defined range or are invalid.
+* Action: Verify the function parameters against the API documentation to ensure they are within the acceptable range and format.
+
+**SUSI_STATUS_INVALID_BLOCK_ALIGNMENT:**
+* Value: `0xFFFFFEFE`
+* Description: Incorrect block alignment. This occurs when data is not aligned to the required memory boundaries, potentially leading to performance issues or errors.
+* Action: Use the input and output specifications provided in the API documentation to correctly align the data.
+
+**SUSI_STATUS_INVALID_BLOCK_LENGTH:**
+* Value: `0xFFFFFEFD`
+* Description: The block length is too long. This indicates that the requested data block size exceeds the maximum allowed by the hardware or API.
+* Action: Use the alignment capabilities information provided by the API to determine the maximum allowed block length and adjust your request accordingly.
+
+@@@@
+Status Codes( part 2)
+**SUSI_STATUS_INVALID_DIRECTION:**
+* Value: `0xFFFFFEFC`
+* Description: Trying to set GPIOs to an unsupported direction. For example, attempting to set a GPIO pin configured as input to output.
+* Action: Refer to the input and output specifications for the specific GPIO pin in the API documentation to ensure you are setting the correct direction.
+
+**SUSI_STATUS_INVALID_BITMASK:**
+* Value: `0xFFFFFEFB`
+* Description: The bitmask selects unsupported bits/GPIOs for the current ID. This means the bitmask contains bits that correspond to GPIO pins not supported by the selected ID.
+* Action: Consult the input and output specifications for the specific ID in the API documentation to determine the supported GPIO pins and adjust your bitmask accordingly.
+
+**SUSI_STATUS_RUNNING:**
+* Value: `0xFFFFFEFA`
+* Description: Watchdog timer is already running. This indicates an attempt to start the watchdog timer while it is already active.
+* Action: Call `SusiWDogStop` to stop the existing watchdog timer before attempting to start it again.
+
+**SUSI_STATUS_UNSUPPORTED:**
+* Value: `0xFFFFFCFF`
+* Description: The requested function or ID is not supported by the hardware environment or the current API version.
+* Action: Verify that the requested functionality is supported by the hardware and API version being used. Consider alternative approaches if the functionality is not available.
+
+**SUSI_STATUS_NOT_FOUND:**
+* Value: `0xFFFFFBFF`
+* Description: The selected device was not found. This indicates that the specified device ID does not correspond to a valid device on the system.
+* Action: Verify the device ID and ensure that the device is properly connected and recognized by the system.
+
+**SUSI_STATUS_TIMEOUT:**
+* Value: `0xFFFFFBFE`
+* Description: The device did not respond after several retries. This indicates a communication issue with the device, potentially due to a hardware malfunction or connection problem.
+* Action: Check the device connection and verify that it is powered on and functioning correctly. Consider resetting the device or the system.
+
+**SUSI_STATUS_BUSY_COLLISION:**
+* Value: `0xFFFFFBFD`
+* Description: The selected device or ID is busy, or a data collision was detected on the bus. This indicates a conflict in accessing the device, potentially due to simultaneous access attempts.
+* Action: Retry the operation after a short delay. If the issue persists, investigate potential resource contention issues or driver conflicts.
+
+**SUSI_STATUS_NORESPONSE:**
+* Value: `0xFFFFFBFC`
+* Description: The selected device is not responding. This indicates a complete lack of communication with the device, potentially due to a hardware failure or incorrect device ID.
+* Action: Verify the device connection, power, and functionality. Check the device ID and ensure it is correct.
+
+**SUSI_STATUS_NOACK:**
+* Value: `0xFFFFFBFB`
+* Description: The selected device did not acknowledge the request. This indicates a communication breakdown where the device received the request but did not send an acknowledgment.
+* Action: Check the device connection and verify its functionality. Investigate potential communication issues or driver problems.
+
+
+@@@@
+Status Codes( part 3)
+**SUSI_STATUS_LOCKFAIL:**
+* Value: `0xFFFFFBFA`
+* Description: Failed to acquire a spin lock or mutex lock. This indicates a synchronization issue where the API was unable to obtain exclusive access to a shared resource.
+* Action: This error usually suggests a problem within the SUSI API or driver. Consider updating the driver or API version. If the issue persists, contact technical support.
+
+**SUSI_STATUS_DEVICE_ERROR:**
+* Value: `0xFFFFFBF9`
+* Description: The selected device encountered an error. This is a generic error indicating a problem with the device itself.
+* Action: Check the device's status and error logs for more specific information about the error. Consider resetting the device or checking for hardware issues.
+
+**SUSI_STATUS_READ_ERROR:**
+* Value: `0xFFFFFAFF`
+* Description: An error occurred during a read operation. This indicates a problem reading data from the device or memory location.
+* Action: Retry the operation. If the issue persists, investigate potential hardware issues, connection problems, or data corruption.
+
+**SUSI_STATUS_WRITE_ERROR:**
+* Value: `0xFFFFFAFE`
+* Description: An error occurred during a write operation. This indicates a problem writing data to the device or memory location.
+* Action: Retry the operation. If the issue persists, investigate potential hardware issues, connection problems, or write protection mechanisms.
+
+**SUSI_STATUS_ACCESS_ERROR:**
+* Value: `0xFFFFFAFD`
+* Description: An error occurred during an access operation. This is a generic error indicating a problem accessing the device or memory location.
+* Action: Retry the operation. If the issue persists, investigate potential hardware issues, connection problems, or access permission errors.
+
+**SUSI_STATUS_MORE_DATA:**
+* Value: `0xFFFFF9FF`
+* Description: The amount of data available exceeds the buffer size. Storage buffer overflow was prevented. This occurs when the read data is larger than the provided buffer.
+* Action: Increase the buffer size to accommodate the larger data size or reduce the requested data length.
+
+**SUSI_STATUS_ERROR:**
+* Value: `0xFFFFF0FF`
+* Description: A generic error occurred. No further details are available.
+* Action: Check system logs and application output for potential clues about the error. Consider increasing logging verbosity for more detailed information.
+
+**SUSI_STATUS_SUCCESS:**
+* Value: `0`
+* Description: The operation completed successfully.
+* Action: None.
+
+
+
+@@@@
+SusiLibInitialize
+
+<c code>
+uint32_t SUSI_API SusiLibInitialize(void)
+<code end>
+
+**Description:**
+
+Initializes the SUSI API library. This function must be called before using any other SUSI API functions.
+
+**Parameters:**
+
+None
+
+**Return Status Code:**
+
+* `SUSI_STATUS_INITIALIZED` (Value: `0xFFFFFFFE`): Library is already initialized.
+* `SUSI_STATUS_NOT_INITIALIZED` (Value: `0xFFFFFFFF`): Initialization failed.
+* `SUSI_STATUS_SUCCESS` (Value: `0`): Initialization successful.
+
+@@@@
+SusiLibUninitialize
+
+<c code>
+uint32_t SUSI_API SusiLibUninitialize(void)
+<code end>
+
+**Description:**
+
+Uninitializes the SUSI API library. This function should be called before program exit to release resources held by the library.
+
+**Parameters:**
+
+None
+
+**Return Status Code:**
+
+* `SUSI_STATUS_NOT_INITIALIZED` (Value: `0xFFFFFFFF`): Library is not initialized.
+* `SUSI_STATUS_SUCCESS` (Value: `0`): Uninitialization successful.
+
+
+@@@@
+SusiBoardGetValue
+
+<c code>
+uint32_t SUSI_API SusiBoardGetValue(uint32_t Id, uint32_t *pValue)
+<code end>
+(To know SMBUS support or not. To know I2C support or not. )
+
+**Description:**
+Retrieves numerical information about the hardware platform.Retrieve various hardware info and monitoring data.
+Uese this function to know if a specific hardware feature is supported by SUSI on user platform.
+
+
+**Parameters:**
+
+* `Id`: Selects the target value to retrieve. See the list below for possible `Id` values and their descriptions.
+* `pValue`: Pointer to a buffer that receives the retrieved value. The size of the buffer depends on the `Id` parameter. For single-value IDs, a `uint32_t` pointer is sufficient. For multi-value IDs (e.g., IP address), an array of appropriate size should be used.
+
+**Return Status Code:**
+
+* `SUSI_STATUS_NOT_INITIALIZED` (Value: `0xFFFFFFFF`): Library is not initialized.
+* `SUSI_STATUS_INVALID_PARAMETER` (Value: `0xFFFFFEFF`): `pValue` is NULL.
+* `SUSI_STATUS_UNSUPPORTED` (Value: `0xFFFFFCFF`): Unknown `Id` or the device is not supported.
+* `SUSI_STATUS_SUCCESS` (Value: `0`): Value retrieved successfully.
+
+Using Below ID in SusiBoardGetValue and getting the corresponding value described behind each item.
+
+**Board Information Value IDs:**
+
+* `SUSI_ID_GET_SPEC_VERSION` (Value: `0x00000000`): API specification version.
+* `SUSI_ID_BOARD_BOOT_COUNTER_VAL` (Value: `0x00000001`): Boot counter (number of system boots). Unit: boots.
+* `SUSI_ID_BOARD_RUNNING_TIME_METER_VAL` (Value: `0x00000002`): Running time meter (total system uptime). Unit: hours.
+* `SUSI_ID_BOARD_PNPID_VAL` (Value: `0x00000003`): Vendor PNPID (unique identifier for the board vendor).
+* `SUSI_ID_BOARD_PLATFORM_REV_VAL` (Value: `0x00000004`): Platform revision (hardware iteration).
+* `SUSI_ID_BOARD_DRIVER_VERSION_VAL` (Value: `0x00010000`): Driver version (SUSI driver software version).
+* `SUSI_ID_BOARD_LIB_VERSION_VAL` (Value: `0x00010001`): Library version (SUSI API library version).
+* `SUSI_ID_BOARD_FIRMWARE_VERSION_VAL` (Value: `0x00010002`): Firmware version (software version embedded in the hardware).
+* `SUSI_ID_SMBUS_SUPPORTED` (Value: `0x00030000`): Mask flags for supported SMBus devices. See "SMBus and I2C Device IDs" for details.
+* `SUSI_ID_I2C_SUPPORTED` (Value: `0x00030100`): Mask flags for supported I2C devices. See "SMBus and I2C Device IDs" for details.
